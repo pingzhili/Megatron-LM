@@ -1,0 +1,94 @@
+language_model:
+  # model architecture
+  num_layers: 12
+  hidden_size: 512
+  num_attention_heads: 8
+
+  ffn_hidden_size: 2048
+  kv_channels: 64
+
+  add_bias_linear: False
+  activation_func: swiglu
+  num_moe_experts: 16
+
+  # Additional parameters from bash script
+  multi_latent_attention: True  # From --multi-latent-attention
+  kv_lora_rank: 64  # From --kv-lora-rank
+  q_lora_rank: 192  # From --q-lora-rank
+  qk_head_dim: 64  # From --qk-head-dim
+  qk_layernorm: True  # From --qk-layernorm
+  qk_pos_emb_head_dim: 32  # From --qk-pos-emb-head-dim
+  
+  # MoE specific parameters
+  moe_layer_freq: "[0]*2+[1]*10"  # From --moe-layer-freq
+  moe_ffn_hidden_size: 256  # From --moe-ffn-hidden-size
+  moe_router_score_function: sigmoid  # From --moe-router-score-function
+  moe_router_bias_update_rate: 0.001  # From --moe-router-bias-update-rate
+  moe_router_enable_expert_bias: True  # From --moe-router-enable-expert-bias
+  moe_router_topk: 4  # From --moe-router-topk
+  moe_router_pre_softmax: True  # From --moe-router-pre-softmax
+  moe_router_topk_scaling_factor: 2.5  # From --moe-router-topk-scaling-factor
+  moe_shared_expert_overlap: True  # From --moe-shared-expert-overlap
+  moe_shared_expert_intermediate_size: 512  # From --moe-shared-expert-intermediate-size
+  moe_router_load_balancing_type: "seq_aux_loss"
+  moe_aux_loss_coeff: 1e-4
+  moe_token_dispatcher_type: "alltoall"
+  moe_token_drop_policy: "none"
+  
+  # initialization
+  init_method_std: 0.006
+
+  # fusion
+  masked_softmax_fusion: False  # From --no-masked-softmax-fusion
+  apply_rope_fusion: False  # From --no-rope-fusion
+  
+  # activation recomputation
+  recompute_granularity: "full"
+
+  normalization: "RMSNorm"  # From --normalization RMSNorm
+  
+model_parallel:
+  # Model parallelism
+#  tensor_model_parallel_size: 1  # Default value
+#  context_parallel_size: 1  # Default value
+#  pipeline_model_parallel_size: 1  # Default value
+#  virtual_pipeline_model_parallel_size: null  # Default value
+#  sequence_parallel: True  # Default value
+#  expert_model_parallel_size: 1  # Default value
+  
+  # Initialization
+  perform_initialization: True  # Default value
+  use_cpu_initialization: null  # Default value
+  
+  # Training
+  fp16: False  # Default value
+  bf16: True  # From --bf16
+  params_dtype: null  # Default value
+  timers: null  # Default value
+
+# Training parameters
+micro_batch_size: 1  # From --micro-batch-size
+save_interval: 100  # From --save-interval
+
+# Model architecture specifications
+untie_embeddings_and_output_weights: True  # From --untie-embeddings-and-output-weights
+position_embedding_type: rope  # From --use-rotary-position-embeddings
+rotary_percent: 1.0  # From --rotary-percent
+add_position_embedding: False  # From --no-position-embedding
+max_position_embeddings: 32768  # From --max-position-embeddings
+seq_length: 2048  # From --seq-length
+make_vocab_size_divisible_by: 160  # From --make-vocab-size-divisible-by
+
+# Additional rotary parameters
+rotary_base: 10000  # From --rotary-base
+rotary_scaling_factor: 40  # From --rotary-scaling-factor
+
+# Miscellaneous parameters
+use_mcore_models: True  # From --use-mcore-models
+mscale: 1.0  # From --mscale
+mscale_all_dim: 1.0  # From --mscale-all-dim
+recompute_activations: True  # From --recompute-activations
+
+# Tokenizer configuration
+tokenizer_type: HuggingFaceTokenizer  # From --tokenizer-type
+tokenizer_model: "deepseek-ai/DeepSeek-V3"  # From TOKENIZER_MODEL variable
